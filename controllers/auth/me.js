@@ -3,6 +3,7 @@ const { Unauthorized } = require('http-errors')
 const TokenService = require('../../service/token-service')
 
 const me = async (req, res) => {
+  const { mock = 0 } = req.params
   const users = req.app.locals.collection
   const collectionToken = req.app.locals.collectionToken
   const { refreshToken } = req.cookies
@@ -25,12 +26,23 @@ const me = async (req, res) => {
     user.accessToken,
   )
   if (!userDataAccess) {
-    throw new Unauthorized('accessToken - error')
+    throw new Unauthorized('accessToken - error ')
   }
 
-  res.json({
-    userEmail: user.email,
-  })
+  if (mock === 0) {
+    return res.json({
+      data: {
+        userEmail: user.email,
+      },
+    })
+  } else {
+    res.json({
+      request_num: mock,
+      data: {
+        userEmail: user.email,
+      },
+    })
+  }
 }
 
 module.exports = me
